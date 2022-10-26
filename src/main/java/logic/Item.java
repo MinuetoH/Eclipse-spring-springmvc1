@@ -1,13 +1,24 @@
 package logic;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+
 import org.springframework.web.multipart.MultipartFile;
 
 public class Item {
 	private int id;
+	//값이 입력 안된경우 검증
+	@NotEmpty(message="상품명을 입력하세요")
 	private String name;
+	@Min(value=10,message="10원이상 가능합니다.") //최소값
+	@Max(value=100000,message="10만원이하만 가능합니다.") //최대값
 	private int price;
+	@NotEmpty(message="상품설명을 입력하세요")
 	private String description;
 	private String pictureUrl;
+	//name=picture 태그가 선택한 파일의 내용 저장
+	//<input type="file" name="picture">
 	private MultipartFile picture;
 	
 	//setter,getter, toString
