@@ -71,4 +71,9 @@ public class ItemDao {
 			+ " where id=:id";
 		template.update(sql, param); //db 수정
 	}
+	public void delete(Integer id) {
+		param.clear();
+		param.put("id", id);
+		template.update("delete from item where id=:id", param); //db 수정
+	}
 }

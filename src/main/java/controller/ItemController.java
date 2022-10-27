@@ -110,4 +110,9 @@ public class ItemController {
 		mav.setViewName("redirect:list");
 		return mav;
 	}	
+	@PostMapping("delete")
+	public String delete(Integer id) {	//뷰만 리턴
+		service.itemDelete(id);
+		return "redirect:list";
+	}	
 }

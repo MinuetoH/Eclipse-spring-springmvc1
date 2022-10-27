@@ -45,8 +45,17 @@
 class="org.springframework.web.multipart.commons.CommonsMultipartResolver" 
 p:maxUploadSize="104854600"
 p:maxInMemorySize="10485460">
-
 </bean>
+
+<!-- message 코드값을 저장한 properties 파일을 설정. : 
+	 messages.properties message 처리를 위한 설정  -->
+<bean id="messageSource"
+  class="org.springframework.context.support.ResourceBundleMessageSource">
+  <property name="basenames">
+    <list><value>messages</value></list>
+  </property>
+</bean>
+
 <!-- 예외처리 -->
 <bean id="exceptionHandler" 
      class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
