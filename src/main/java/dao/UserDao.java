@@ -51,7 +51,6 @@ public class UserDao {
 				+ "birthday=:birthday, phoneno=:phoneno, postcode=:postcode, "
 				+ "address=:address, email=:email where userid=:userid";
 		template.update(sql, param);
-
 	}
 
 }

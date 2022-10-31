@@ -21,14 +21,15 @@
 	
 </script>
 <style type="text/css">
-	.select {
-		padding:3px;
-		background-color : #0000ff;
-	}
-	.select>a {
-		color : #ffffff;
-		text-
-	}
+  .select {
+     padding:3px;
+     background-color: #0000ff;
+  }
+  .select>a {
+      color : #ffffff;
+      text-decoration: none;
+      font-weight: bold;
+  }
 </style>
 </head>
 <body>
