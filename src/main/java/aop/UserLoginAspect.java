@@ -37,7 +37,21 @@ public class UserLoginAspect {
 		//session : Pointcut 메서드의 마지막 매개변수
 		User loginUser = (User)session.getAttribute("loginUser");
 		if(loginUser == null) {	//로그아웃된 상태
-			throw new LoginException("[userlogin]로그인 후 거래하세요","login");
+			throw new LoginException("[userlogin]로그인 후 거래하세요.","login");
+		}
+		return joinPoint.proceed();	//다음 메서드로 진행.
+	}
+	@Around("execution(* controller.User*.idCheck*(..)) && args(.., id, session)")
+	public Object userIdCheck(ProceedingJoinPoint joinPoint, String id,
+			HttpSession session) throws Throwable {
+		//로그인 여부 검증
+		User loginUser = (User)session.getAttribute("loginUser");
+		if(loginUser == null) {	//로그아웃된 상태
+			throw new LoginException("[IdCheck]로그인 후 거래하세요.","login");
+		}
+		//amdin이 아니면서, 로그인 아이디와 파라미터 id값이 다른 경우
+		if(!loginUser.getUserid().equals(id) && !loginUser.getUserid().equals("admin")) {
+			throw new LoginException("[IdCheck]본인만 거래 가능합니다.","../item/list");
 		}
 		return joinPoint.proceed();	//다음 메서드로 진행.
 	}

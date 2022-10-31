@@ -14,71 +14,56 @@
 </head>
 <body>
 <h2>사용자 등록</h2>
-<%-- form:form : html 태그 form 태그, 유효성 검증을 위한 form 설정 
-	 modelAttribute="user" : join.jsp 페이지가 실행 시 User 객체 필요함
---%>
 <form:form modelAttribute="user" method="post" action="join">
-<%-- 오류 메세지의 코드에 해당하는 메세지 출력 --%>
 <spring:hasBindErrors name="user">
 <font color="red">
-<!-- ${errors.globalErrors } : Controller에서 BindingResult객체에서
-	 reject() 메서드로 설정한 코드값들 -->
   <c:forEach items="${errors.globalErrors }" var="error">
     <spring:message code="${error.code}"/>
   </c:forEach>
 </font>
 </spring:hasBindErrors>
-
-<div class="w3-row w3-section">
-  <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-user"></i></div>
-    <div class="w3-rest">
-      <form:input class="w3-input w3-border" path="userid"  placeholder="아이디" onkeyup="idChk(this.value)" />
-      <font color="red"><form:errors path="userid" /></font>
-    </div>
-</div>
-<div class="w3-row w3-section">
-  <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-user"></i></div>
-    <div class="w3-rest">
-      <form:password path="password"  class="w3-input w3-border"  placeholder="비밀번호" /> 
-      <font color="red"><form:errors	path="password" /></font>
-    </div>
-</div>
-<div class="w3-row w3-section">
-  <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-pencil"></i></div>
-    <div class="w3-rest">
-      <form:input class="w3-input w3-border" path="username"  placeholder="이름"  />
-      <font color="red"><form:errors path="username" /></font>
-    </div>
-</div>
-<div class="w3-row w3-section">
-  <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-phone"></i></div>
-    <div class="w3-rest">
-      <form:input class="w3-input w3-border" path="phoneno"  placeholder="전화번호"  />
-      <font color="red"><form:errors path="phoneno" /></font>
-    </div>
-</div>
-<div class="w3-row w3-section">
-  <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-envelope-o"></i></div>
-    <div class="w3-rest">
-      <form:input class="w3-input w3-border" path="postcode"  placeholder="우편번호"  />
-      <font color="red"><form:errors path="postcode" /></font>
-    </div>
-</div>
-<div class="w3-row w3-section">
-  <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-envelope-o"></i></div>
-    <div class="w3-rest">
-      <form:input class="w3-input w3-border" path="email"  placeholder="이메일"  />
-      <font color="red"><form:errors path="email" /></font>
-    </div>
-</div>
-<div class="w3-row w3-section">
-  <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-user"></i></div>
-    <div class="w3-rest">
-      <form:input class="w3-input w3-border" path="birthday"  placeholder="생년월일"  />
-      <font color="red"><form:errors path="birthday" /></font>
-    </div>
-</div>
-<button class="w3-button w3-block w3-section w3-blue w3-ripple w3-padding">회원등록</button>
-</form:form>
-</body>
-</html>
+<table border="1" style="border-collapse: collapse;" class="w3-table">
+<tr>
+	<td>아이디</td>
+    <td><form:input path="userid" onkeyup="idChk(this.value)" />
+	   <font color="red"><form:errors path="userid" /></font></td>
+</tr>
+<tr>
+	<td>비밀번호</td>
+	<td><form:password path="password" />
+	 <font color="red"><form:errors	path="password" /></font></td>
+</tr>
+<tr>
+	<td>이름</td>
+	<td><form:input path="username" />
+	 <font color="red"><form:errors	path="username" /></font></td>
+</tr>
+<tr>
+	<td>전화번호</td>
+	<td><form:input path="phoneno" />
+	 <font color="red"><form:errors	path="phoneno" /></font></td>
+</tr>
+<tr>
+	<td>우편번호</td>
+	<td><form:input path="postcode" />
+    <font color="red"><form:errors	path="postcode" /></font></td>
+</tr>
+<tr>
+	<td>주소</td>
+	<td><form:input path="address" />
+	<font color="red"><form:errors	path="address" /></font></td>
+</tr>
+<tr>
+	<td>이메일</td>
+	<td><form:input path="email" />
+	 <font color="red"><form:errors	path="email" /></font></td>
+</tr>
+<tr>
+	<td>생년월일</td>
+	<td><form:input path="birthday" />
+    <font color="red"><form:errors	path="birthday" /></font></td>
+</tr>
+<tr><td colspan="2" align="center">
+	  <input type="submit" value="등록">
+	  <input type="reset" value="초기화"></td>
+</tr></table></form:form></body></html>

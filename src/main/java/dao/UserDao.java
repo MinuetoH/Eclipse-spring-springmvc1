@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.sql.DataSource;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -43,4 +44,14 @@ public class UserDao {
 		return template.queryForObject
 ("select * from useraccount where userid=:userid", param, mapper);
 	}
+
+	public void update(@Valid User user) {
+		SqlParameterSource param = new BeanPropertySqlParameterSource(user);
+		String sql = "update useraccount set username=:username, "
+				+ "birthday=:birthday, phoneno=:phoneno, postcode=:postcode, "
+				+ "address=:address, email=:email where userid=:userid";
+		template.update(sql, param);
+
+	}
+
 }

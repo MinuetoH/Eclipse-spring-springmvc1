@@ -89,4 +89,8 @@ public class ShopService {
 		return userDao.selectOne(userid);
 	}
 
+	public void userUpdate(@Valid User user) {
+		userDao.update(user);
+	}
+
 }
