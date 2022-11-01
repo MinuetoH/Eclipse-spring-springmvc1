@@ -53,4 +53,20 @@ public class UserDao {
 		template.update(sql, param);
 	}
 
+	public void delete(String userid) {
+		param.clear();
+		param.put("userid", userid);
+		template.update
+			("delete from useraccount where userid=:userid", param);
+	}
+
+	public void chgpass(String userid, String pass) {
+		param.clear();
+		param.put("userid", userid);
+		param.put("password", pass);
+		template.update
+ ("update useraccount set password=:password where userid=:userid",
+		param);
+	}
+
 }

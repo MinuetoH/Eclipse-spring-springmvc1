@@ -15,6 +15,8 @@ public class SiteMeshFilter  extends ConfigurableSiteMeshFilter{
 	@Override
 	protected void applyCustomConfiguration
 	                 (SiteMeshFilterBuilder builder) {
-		builder.addDecoratorPath("/*", "/layout/kiclayout.jsp");
+		builder.addDecoratorPath("/*", "/layout/kiclayout.jsp")
+		.addExcludedPath("/user/idsearch*")
+		.addExcludedPath("/user/pwsearch*");
 	}
 }

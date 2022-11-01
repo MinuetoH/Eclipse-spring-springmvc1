@@ -1,5 +1,7 @@
 package controller;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -9,8 +11,10 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import exception.LoginException;
@@ -117,7 +121,7 @@ public class UserController {
 		mav.addObject("user",user);
 		return mav;
 	}
-	@GetMapping("update")
+	@GetMapping({"update","delete"})
 	public ModelAndView idCheckUser(String id, HttpSession session) {
 		ModelAndView mav = new ModelAndView();
 		User user = service.getUser(id);
@@ -150,6 +154,134 @@ public class UserController {
 		} catch(Exception e) {
 			throw new LoginException("고객 정보 수정 실패","update?id="+user.getUserid());
 		}
+		return mav;
+	}
+	@PostMapping("delete")
+	public ModelAndView idCheckDelete(String password, 
+			String userid, HttpSession session) {
+		ModelAndView mav = new ModelAndView();
+		//관리자인 경우 탈퇴 불가
+		if(userid.equals("admin")) {
+			throw new LoginException
+				("관리자 탈퇴는 불가합니다.","mypage?id="+userid);
+		}
+		//로그인된 비밀번호 검증
+		User loginUser = (User)session.getAttribute("loginUser");
+		//로그인된 비밀번호 검증 : 불일치
+		if(!password.equals(loginUser.getPassword())) {
+			throw new LoginException
+				("비밀번호를 확인하세요.","delete?id="+userid);
+		}
+		//로그인된 비밀번호 검증 : 일치
+		try {
+			service.userDelete(userid);	//db에서 해당 사용자정보 삭제
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw new LoginException("탈퇴 시 오류 발생.","delete?id="+userid);
+		}
+		//탈퇴 성공
+		//관리자 회원 강제 탈퇴
+		if(loginUser.getUserid().equals("admin")) {
+			mav.setViewName("redirect:../admin/list");
+		} else {	//본인 탈퇴
+			mav.setViewName("redirect:login");
+			session.invalidate();
+		}
+		return mav;
+	}
+	@GetMapping("password")
+	public String loginCheckPassword(HttpSession session) {
+		return null;
+	}
+	/*
+	 * 1. 로그인 검증
+	 * 2. 파라미터값을 Map 객체로 저장
+	 * 	  @RequestParam : 요청파라미터를 Map객체로 저장하도록하는 어노테이션
+	 * 	  req.put("password",password의 파라미터값)
+	 * 	  req.put("chapass",chapass의 파라미터값)
+	 * 	  req.put("chapass2",chapass2의 파라미터값)
+	 * 3. 현재 비밀번호와 입력된 비밀번호 검증
+	 * 	  불일치 : 오류 메세지 출력. password 페이지 이동
+	 * 4. 일치 : db 수정
+	 * 5. 성공 : 로그인정보 변경, mypage 페이지 이동
+	 * 	  실패 : 오류 메세지 출력. password 페이지 이동
+	 */
+	@PostMapping("password") 
+	public String loginCheckPasswordRtn(
+	 @RequestParam Map<String,String>req,HttpSession session) {
+		System.out.println(req);
+		//비밀번호 검증 
+		User loginUser = (User)session.getAttribute("loginUser");
+		//req.get("password") : 입력된 현재 비밀번호 
+		//loginUser.getPassword() : 등록된 비밀번호
+		if(!req.get("password").equals(loginUser.getPassword())) {
+			throw new LoginException("비밀번호 오류 입니다.","password");
+		}
+		try { //비밀번호 일치
+			//loginUser.getUserid() : 로그인 사용자아이디
+			//req.get("chgpass") : 입력된 변경할 비밀번호
+			service.userChgpass
+			   (loginUser.getUserid(),req.get("chgpass"));
+			//로그인 정보 변경
+			loginUser.setPassword(req.get("chgpass"));
+		} catch(Exception e) {
+			  throw new LoginException
+			  ("비밀번호 수정시 db 오류 입니다.","password");
+		}
+		return "redirect:mypage?id="+loginUser.getUserid();
+	}
+	/*
+	 * {url}search) : *search인 요청인 경우 호출되는 메서드
+	 * @PathVariable String url : {url}값을 매개변수 전달.
+	 * 
+	 * http://localhost:8088/springmvc1/user/idsearch
+	 * url : id 값 저장
+	 * 
+	 * http://localhost:8088/springmvc1/user/pwsearch
+	 * url : pw 값 저장
+	 */
+	@PostMapping("{url}search)")
+	public ModelAndView search(User user, BindingResult bresult,
+			@PathVariable String url) {
+		ModelAndView mav = new ModelAndView();
+		String code = "error.userid.search"; //아이디를 찾을 수 없습니다.
+		String title = "아이디";
+		if(user.getEmail() == null || user.getEmail().equals("")) {
+			//rejectValue : 프로퍼티별로 오류 정보 저장
+			//<form:errors path="email" /> 출력
+			////오류코드 : error.required.email 설정됨
+			bresult.rejectValue("email", "error.required");
+		}
+		if(user.getPhoneno() == null || user.getPhoneno().equals("")) {
+			//<form:errors path="phoneno" /> 출력
+			//오류코드 : error.required.phoneno 설정됨
+			bresult.rejectValue("phoneno", "error.required");
+		}
+		if(url.equals("pw")) {
+			title = "비밀번호";
+			code = "error.password.search";
+			if(user.getUserid() == null || user.getUserid().equals("")) {
+				//<form:errors path="userid" /> 출력
+				//오류코드 : error.required.userid 설정됨
+				bresult.rejectValue("userid", "error.required");
+			}
+		}
+		if(bresult.hasErrors()) {
+			mav.getModel().putAll(bresult.getModel());
+			return mav;
+		}
+		
+		String result = null;
+		try {
+			result = service.getSearch(user,url);
+		} catch(EmptyResultDataAccessException e) {
+			bresult.reject(code); //grobals 오류
+			mav.getModel().putAll(bresult.getModel());
+			return mav;
+		}
+		mav.addObject("result",result);
+		mav.addObject("title",title);
+		mav.setViewName("search");
 		return mav;
 	}
 }	

@@ -93,4 +93,17 @@ public class ShopService {
 		userDao.update(user);
 	}
 
+	public void userDelete(String userid) {
+		userDao.delete(userid);
+	}
+
+	public void userChgpass(String userid, String pass) {
+		userDao.chgpass(userid,pass);
+	}
+
+	public String getSearch(User user, String url) {
+		
+		return null;
+	}
+
 }
