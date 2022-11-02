@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import dao.ItemDao;
+import dao.SaleDao;
 import dao.UserDao;
 /*
  * @Component : 해당 클래스를 객체화
@@ -22,6 +23,8 @@ public class ShopService {
 	private ItemDao itemDao;
 	@Autowired  
 	private UserDao userDao;
+	@Autowired
+	private SaleDao saleDao;
 
 	public List<Item> itemList() {
 		return itemDao.list();
@@ -102,7 +105,24 @@ public class ShopService {
 	}
 
 	public String getSearch(User user, String url) {
-		
+		return userDao.search(user,url);
+	}
+
+	public List<User> userlist() {
+		return userDao.list();
+	}
+	
+	/*
+	 * 로그인정보, 장바구니 정보에서 sale, saleitem 테이블에 데이터 저장
+	 * 결과를 Sale 객체로 저장
+	 * 1. sale 테이블의 saleid의 최대값 조회
+	 * 2. sale 테이블에 saleid의 최대값+1, userid, sysdate 등록
+	 * 3. Cart 테이블에서 saleitem 데이터 를 저장
+	 * 4. Sale 객체에 모든 데이터 저장
+	 */
+	public Sale checkend(User loginUser, Cart cart) {
+		//1. sale 테이블의 saleid의 최대값 조회
+		int maxid = saleDao.getMaxSaleId();
 		return null;
 	}
 
